@@ -1,0 +1,3 @@
+ChenYuluoyan (辰宇落雁體) - Copyright (c) 2022, Wang, Li-Yu & Liu, Wei-Chen.
+Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL).
+The font files in this folder are subsets renamed "XJ Hand" and "XJ Default" (the latter from cjkFonts Allseto, see FONT-LICENSE-allseto-OFL.txt).
