@@ -103,3 +103,24 @@ window.approveUser = async function(targetUid) {
     console.error("核准失敗：", error.message);
   }
 };
+
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const auth = getAuth();
+
+// 監聽登入狀態：只要一重新整理，它就會自動幫你檢查是不是還登入著
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // 使用者是登入狀態！
+    console.log("目前已登入的用戶 UID：", user.uid);
+    
+    // 💡 可以在這裡寫：如果已經登入，就自動切換到管理後台或主畫面
+    // 例如：showAdminDashboard();
+  } else {
+    // 使用者確實是登出狀態
+    console.log("目前未登入");
+    
+    // 💡 可以在這裡寫：如果沒登入，就留在登入頁面
+    // 例如：showLoginPage();
+  }
+});
