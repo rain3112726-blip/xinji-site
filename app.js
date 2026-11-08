@@ -1,9 +1,9 @@
 // 1. 引入 Firebase 必要模組
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// 2. 你的 Firebase 專案設定（已帶入你的專案鑰匙）
+// 2. 你的 Firebase 專案設定
 const firebaseConfig = {
   apiKey: "AIzaSyDIoej4_PA6muS6Cn27stC_zpR0mN8qBOI",
   authDomain: "interpsychic.firebaseapp.com",
@@ -32,7 +32,7 @@ window.registerUser = async function(email, password, name) {
       uid: user.uid,
       email: email,
       name: name,
-      status: "pending", // 預設狀態為：待審核
+      status: "pending",
       createdAt: new Date().toISOString()
     });
 
@@ -51,20 +51,16 @@ window.loginUser = async function(email, password) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 檢查該使用者的審核狀態
     const docRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       const userData = docSnap.data();
       if (userData.status === "pending") {
-        alert("您的帳號正在審核中，請耐心等候管理員審核。");
+        alert("您的帳號正在審核中，請耐心等候。");
       } else if (userData.status === "approved") {
-        alert("登入成功！歡迎回來。");
-        // 這裡可以導向到你的主要功能頁面
+        alert("登入成功！");
       }
-    } else {
-      alert("找不到此使用者的資料紀錄。");
     }
   } catch (error) {
     console.error("登入失敗：", error.message);
@@ -73,20 +69,24 @@ window.loginUser = async function(email, password) {
 };
 
 // ==========================================
-// C. 管理員功能：讀取所有使用者清單
+// C. 管理員功能：即時監聽所有用戶（永遠不會漏掉資料）
 // ==========================================
-window.loadPendingUsers = async function() {
-  try {
-    const querySnapshot = await getDocs(collection(db, "users"));
+window.listenToUsers = function(callback) {
+  // onSnapshot 會即時盯著資料庫，有任何人註冊、修改，這裡就會立刻收到通知！
+  onSnapshot(collection(db, "users"), (snapshot) => {
     let usersList = [];
-    querySnapshot.forEach((doc) => {
+    snapshot.forEach((doc) => {
       usersList.push(doc.data());
     });
-    console.log("所有用戶清單：", usersList);
-    return usersList;
-  } catch (error) {
-    console.error("讀取清單失敗：", error.message);
-  }
+    console.log("資料庫最新用戶名單：", usersList);
+    
+    // 如果你在前端網頁有寫渲染函數，可以把資料傳給它
+    if (typeof callback === "function") {
+      callback(usersList);
+    }
+  }, (error) => {
+    console.error("監聽失敗：", error);
+  });
 };
 
 // ==========================================
@@ -96,7 +96,7 @@ window.approveUser = async function(targetUid) {
   try {
     const userRef = doc(db, "users", targetUid);
     await updateDoc(userRef, {
-      status: "approved" // 將狀態改為已核准
+      status: "approved"
     });
     alert("已成功核准該用戶！");
   } catch (error) {
