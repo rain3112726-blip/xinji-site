@@ -217,10 +217,10 @@ portal(){return `<h2 style="text-align:center;margin-top:30px">你是哪一種�
 <div class="card" style="background:var(--yel)"><h3>🌟 新星報到！</h3><p>註冊申請，通過審核後解鎖限定資料。</p><button class="btn" onclick="go('reg')">我要註冊</button></div>
 <div class="card" style="background:var(--lav)"><h3>🪐 已是行星</h3><p>已有帳號，直接登入。</p><button class="btn l" style="background:#fff" onclick="go('login')">登入</button></div></div>`},
 reg(){return `<div class="card" style="max-width:520px;margin:24px auto"><h2>🌟 新星報到申請</h2>
-<label>姓名</label><input id="rn"><label>學號</label><input id="rs"><label>年級</label><select id="rg">${op(['大一','大二','大三','大四','碩士班','其他'])}</select><label>學校信箱</label><input id="re" type="email"><label>設定密碼（至少 6 碼，推薦包含大小寫英文與符號）</label><input id="rp" type="password">
+<label>姓名</label><input id="rn"><label>學號</label><input id="rs"><label>年級</label><select id="rg">${op(['大一','大二','大三','大四','碩士班','其他'])}</select><label>Gmail 信箱（請用自己的 Gmail，不要用學校信箱）</label><input id="re" type="email" placeholder="example@gmail.com"><label>設定密碼（至少 6 碼，推薦包含大小寫英文與符號）</label><input id="rp" type="password">
 <label>驗證身分方式（二選一）</label><div class="rm"><label><input type="radio" name="rm" id="rup" checked style="width:auto" onchange="rmS()"> 上傳學生證</label><label><input type="radio" name="rm" id="rof" style="width:auto" onchange="rmS()"> 我要實體申請</label></div><div id="rfw"><input id="rf" type="file" accept="image/*"></div><p id="rn1" class="bn">🔒 申請通過後，系統會自動幫你刪除學生證照片。</p><p id="rn2" class="nt1">📮 實體申請：${E(D.cfg.offl||OFFL)}</p><input id="rv" placeholder="幫你開通的學長姐／同學（選填）"><label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input id="rag" type="checkbox" style="width:auto"> 我已閱讀並同意<a style="cursor:pointer;text-decoration:underline" onclick="showPriv()">《隱私與使用說明》</a></label><div class="rmd"><b>📬 送出後請留意</b><ul>${regNotes().map(x=>`<li>${E(x)}</li>`).join('')}</ul></div><br><button class="btn" onclick="reg()">送出申請</button> <button class="btn x" onclick="go('portal')">返回</button></div>`},
 login(){return `<div class="card" style="max-width:420px;margin:24px auto"><h2>🪐 行星登入</h2>
-<label>學校信箱</label><input id="ls" type="email" autocomplete="username"><label>密碼</label><input id="lp" type="password"><br><br>
+<label>Gmail 信箱</label><input id="ls" type="email" autocomplete="username"><label>密碼</label><input id="lp" type="password"><br><br>
 <button class="btn l" onclick="login()">登入</button>
 <p style="font-size:14px;margin-top:10px"><a style="cursor:pointer;text-decoration:underline" onclick="forgotPw()">忘記密碼？</a></p></div>`},
 verify(){return `<div class="card" style="max-width:420px;margin:24px auto"><h2>📬 帳號開通驗證</h2><p>審核通過後，請輸入信件中的 6 碼驗證碼。</p>
@@ -275,7 +275,7 @@ return `<button class="btn x" onclick="go('arts')">← 返回</button><div class
 const like=id=>{const a=D.arts.find(x=>x.id==id),i=a.lk.indexOf(S.u);i<0?a.lk.push(S.u):a.lk.splice(i,1);save();render()};
 const cmt=id=>{const t=V('cmt').trim();if(!t)return;D.arts.find(x=>x.id==id).cm.push({id:uid(),u:S.u,t,d:new Date().toISOString().slice(0,10)});save();render()};
 const delC=(a,c)=>{const o=D.arts.find(x=>x.id==a);o.cm=o.cm.filter(x=>x.id!=c);save();render()};
-P.me=()=>{if(!ok())return P.portal();const u=me(),p=u.pub||{};return `<h2>🪐 我的星球</h2><div class="g"><div class="card"><h3>個人資料</h3><div style="display:flex;gap:12px;align-items:center">${av(u,64)}<label class="btn x" style="margin:0">換頭像<input type="file" hidden accept="image/*" onchange="mkAv(this)"></label></div><label>顯示暱稱</label><input id="mn" value="${E(u.nick||'')}"><br><br><button class="btn" onclick="me().nick=V('mn');save();render();toast('已更新')">儲存暱稱</button><h3 style="margin-top:14px">修改密碼</h3><p style="font-size:14px;opacity:.8">為了安全，改密碼要先經過信箱確認。按下按鈕後，我們會寄一封信到你的學校信箱，點信裡的連結就能設定新密碼，設定好之後要重新登入。</p><button class="btn l" onclick="pwMail()">寄信到我的信箱</button><h3 style="margin-top:14px">🔤 介面字體（整個網站）</h3><select onchange="setU('ff',this.value);render()">${[['h','預設（全瀬體）'],['k','標楷體（霧鹜文楷）'],['w','手寫風（辰宇落雁體）']].map(o=>`<option value="${o[0]}" ${(u.ff||'h')==o[0]?'selected':''}>${o[1]}</option>`).join('')}</select><p style="font-family:${ff()}">文章會長這樣：心際效應 ✦ 星星同學</p><h3 style="margin-top:14px">🔔 通知設定</h3><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" ${u.nf===false?'':'checked'} onchange="setU('nf',this.checked)"> 筆記或考古題更新時，站內通知我</label><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" ${u.em?'checked':''} onchange="setU('em',this.checked)"> 同時寄 Email 給我（正式版啟用）</label></div><div class="card"><h3>註冊資料（已鎖定）</h3><p style="font-size:13px">姓名、學號、年級由註冊自動帶入，修改須向管理員申請。勾選＝對其他同學公開。</p>${[['n','姓名',u.name],['sid','學號',u.sid],['g','年級',u.g||'—']].map(r=>`<div style="display:flex;justify-content:space-between;gap:8px;border-bottom:2px dashed #9aa3d6;padding:6px 0"><span>${r[1]}：<b>${E(r[2])}</b> 🔒</span><label style="margin:0"><input type="checkbox" style="width:auto" ${p[r[0]]?'checked':''} onchange="setPub('${r[0]}',this.checked)"> 公開</label></div>`).join('')}<h3 style="margin-top:14px">申請更正</h3><select id="fk"><option value="name">姓名</option><option value="sid">學號</option><option value="g">年級</option></select><label>正確內容</label><input id="fv"><label>原因</label><input id="fr"><br><br><button class="btn m" onclick="fix()">送出申請</button></div></div>`};
+P.me=()=>{if(!ok())return P.portal();const u=me(),p=u.pub||{};return `<h2>🪐 我的星球</h2><div class="g"><div class="card"><h3>個人資料</h3><div style="display:flex;gap:12px;align-items:center">${av(u,64)}<label class="btn x" style="margin:0">換頭像<input type="file" hidden accept="image/*" onchange="mkAv(this)"></label></div><label>顯示暱稱</label><input id="mn" value="${E(u.nick||'')}"><br><br><button class="btn" onclick="me().nick=V('mn');save();render();toast('已更新')">儲存暱稱</button><h3 style="margin-top:14px">修改密碼</h3><p style="font-size:14px;opacity:.8">為了安全，改密碼要先經過信箱確認。按下按鈕後，我們會寄一封信到你註冊時的 Gmail 信箱（可能在垃圾郵件裡，請一起看看），點信裡的連結就能設定新密碼，設定好之後要重新登入。</p><button class="btn l" onclick="pwMail()">寄信到我的信箱</button><h3 style="margin-top:14px">🔤 介面字體（整個網站）</h3><select onchange="setU('ff',this.value);render()">${[['h','預設（全瀬體）'],['k','標楷體（霧鹜文楷）'],['w','手寫風（辰宇落雁體）']].map(o=>`<option value="${o[0]}" ${(u.ff||'h')==o[0]?'selected':''}>${o[1]}</option>`).join('')}</select><p style="font-family:${ff()}">文章會長這樣：心際效應 ✦ 星星同學</p><h3 style="margin-top:14px">🔔 通知設定</h3><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" ${u.nf===false?'':'checked'} onchange="setU('nf',this.checked)"> 筆記或考古題更新時，站內通知我</label><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" ${u.em?'checked':''} onchange="setU('em',this.checked)"> 同時寄 Email 給我（正式版啟用）</label></div><div class="card"><h3>註冊資料（已鎖定）</h3><p style="font-size:13px">姓名、學號、年級由註冊自動帶入，修改須向管理員申請。勾選＝對其他同學公開。</p>${[['n','姓名',u.name],['sid','學號',u.sid],['g','年級',u.g||'—']].map(r=>`<div style="display:flex;justify-content:space-between;gap:8px;border-bottom:2px dashed #9aa3d6;padding:6px 0"><span>${r[1]}：<b>${E(r[2])}</b> 🔒</span><label style="margin:0"><input type="checkbox" style="width:auto" ${p[r[0]]?'checked':''} onchange="setPub('${r[0]}',this.checked)"> 公開</label></div>`).join('')}<h3 style="margin-top:14px">申請更正</h3><select id="fk"><option value="name">姓名</option><option value="sid">學號</option><option value="g">年級</option></select><label>正確內容</label><input id="fv"><label>原因</label><input id="fr"><br><br><button class="btn m" onclick="fix()">送出申請</button></div></div>`};
 const mkAv=i=>shrink(i.files[0],d=>{me().av=d;save();render()},200);
 const setPub=(k,v)=>{const u=me();u.pub=u.pub||{};u.pub[k]=v;save();toast('已更新公開設定')};
 const chPw=()=>{const u=me();if(V('po')!=u.pw)return toast('舊密碼不正確');if(V('pn').length<6)return toast('新密碼至少6碼');u.pw=V('pn');save();toast('密碼已更新')};
@@ -292,7 +292,7 @@ const saveArt=()=>{const t=V('ta').trim();if(!t)return toast('請填標題');con
 AD.art=()=>{const e=S.ed,a=e&&e!='new'?D.arts.find(x=>x.id==e):null,mk=(l,s)=>l.map(x=>`<option value="${x[0]}" ${s==x[0]?'selected':''}>${x[1]}</option>`).join('');
 if(e)return `<h3>${a?'編輯':'新增'}文章</h3><label>標題</label><input id="ta" value="${E(a?.t)}"><div class="bar"><div><label>閱讀權限</label><select id="tp">${mk(PO,a?.perm)}</select></div><div><label>狀態</label><select id="ts">${mk([['draft','草稿'],['published','已發佈']],a?.st)}</select></div></div><div class="tabs" onmousedown="event.preventDefault()">${[['bold','','<b>B</b>'],['italic','','<i>I</i>'],['underline','','<u>U</u>'],['formatBlock','H2','大標'],['formatBlock','H3','小標'],['formatBlock','P','內文'],['insertUnorderedList','','• 清單'],['formatBlock','BLOCKQUOTE','引用']].map(b=>`<button class="btn x" onclick="ex('${b[0]}','${b[1]}')">${b[2]}</button>`).join('')}</div><div id="ed" contenteditable="true" style="min-height:220px;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:10px">${a?a.h:''}</div><div class="bar"><input id="lk" placeholder="貼上 https:// 連結或圖片網址"><button class="btn x" onclick="insL()">插入連結</button><button class="btn x" onclick="insI()">插入圖片網址</button><label class="btn x" style="margin:0" onmousedown="event.preventDefault()">上傳圖片<input type="file" hidden accept="image/*" onchange="upI(this)"></label></div><button class="btn m" onclick="saveArt()">儲存文章</button> <button class="btn x" onclick="S.ed=null;render()">取消</button>`;
 return `<button class="btn" onclick="S.ed='new';render()">＋ 新增文章</button>${tb(['標題','閱讀權限','狀態','觀測／星／留言','',''],D.arts.map(a=>`<tr><td>${E(a.t)}</td><td>${sel('arts',a.id,'perm',PO,a.perm)}</td><td>${sel('arts',a.id,'st',[['draft','草稿'],['published','已發佈']],a.st)}</td><td>🛰${a.vw.length} ★${a.lk.length} 💬${a.cm.length}</td><td><a style="cursor:pointer" onclick="S.ed='${a.id}';render()">編輯</a></td><td><a style="cursor:pointer" onclick="del('arts','${a.id}')">刪除</a></td></tr>`))}`};
-AD.ctl=()=>{const c=D.cfg;return `<h3>⏸ 暫停網站</h3><label><input type="checkbox" style="width:auto" ${c.pause?'checked':''} onchange="D.cfg.pause=this.checked;save();toast(this.checked?'網站已暫停（管理員仍可使用）':'網站已恢復')"> 暫停網站（訪客與學生只會看到維修頁）</label><label>維修訊息</label><input id="pm" value="${E(c.pm)}"><h3 style="margin-top:16px">🏠 首頁內容與排版</h3><label>首頁副標語</label><input id="sb2" value="${E(c.sub)}"><label>官方信箱</label><input id="cm1" value="${E(c.mail)}"><label>其他聯繫方式</label><input id="co1" value="${E(c.oth)}"><label>允許註冊的信箱網域（用逗號分隔，例如 ntu.edu.tw）</label><input id="cdm" value="${E((c.dom||['ntu.edu.tw']).join(','))}"><p>顯示哪些區塊：</p>${[['ann','公告'],['intro','分頁導覽'],['con','聯繫']].map(x=>`<label style="display:inline-block;margin-right:12px"><input type="checkbox" style="width:auto" ${c.hs[x[0]]?'checked':''} onchange="D.cfg.hs.${x[0]}=this.checked?1:0;save()"> ${x[1]}</label>`).join('')}<br><br><button class="btn m" onclick="Object.assign(D.cfg,{pm:V('pm'),sub:V('sb2'),mail:V('cm1'),oth:V('co1'),dom:V('cdm').split(',').map(x=>x.trim().toLowerCase().replace(/^@/,'')).filter(Boolean)});save();toast('已更新')">儲存</button>`};
+AD.ctl=()=>{const c=D.cfg;return `<h3>⏸ 暫停網站</h3><label><input type="checkbox" style="width:auto" ${c.pause?'checked':''} onchange="D.cfg.pause=this.checked;save();toast(this.checked?'網站已暫停（管理員仍可使用）':'網站已恢復')"> 暫停網站（訪客與學生只會看到維修頁）</label><label>維修訊息</label><input id="pm" value="${E(c.pm)}"><h3 style="margin-top:16px">🏠 首頁內容與排版</h3><label>首頁副標語</label><input id="sb2" value="${E(c.sub)}"><label>官方信箱</label><input id="cm1" value="${E(c.mail)}"><label>其他聯繫方式</label><input id="co1" value="${E(c.oth)}"><label>允許註冊的信箱網域（目前固定只收 gmail.com，此欄只用在導覽文字）</label><input id="cdm" value="${E((c.dom||['gmail.com']).join(','))}"><p>顯示哪些區塊：</p>${[['ann','公告'],['intro','分頁導覽'],['con','聯繫']].map(x=>`<label style="display:inline-block;margin-right:12px"><input type="checkbox" style="width:auto" ${c.hs[x[0]]?'checked':''} onchange="D.cfg.hs.${x[0]}=this.checked?1:0;save()"> ${x[1]}</label>`).join('')}<br><br><button class="btn m" onclick="Object.assign(D.cfg,{pm:V('pm'),sub:V('sb2'),mail:V('cm1'),oth:V('co1'),dom:V('cdm').split(',').map(x=>x.trim().toLowerCase().replace(/^@/,'')).filter(Boolean)});save();toast('已更新')">儲存</button>`};
 const mg=()=>{D.nt=D.nt||[];D.log=D.log||[];D.tags.g=D.tags.g||['大一','大二','大三','大四'];D.tags.ex=D.tags.ex||['第一次段考','第二次段考','期末考'];D.tags.yr=D.tags.yr||['112','113','114','115'];if(!D.cfg.c1){D.cfg.c1=1;['114-1','114-2','115-1','115-2'].forEach(x=>{if(!D.tags.sem.includes(x))D.tags.sem.push(x)});D.tags.sem.sort();D.users=D.users.filter(u=>!(u.id=='u1'&&u.email=='star@example.com'));save()}D.notes.forEach(n=>{if(!n.h)n.h=E(n.body||'').split('\n').map(l=>'<p>'+l+'</p>').join('');n.lk=n.lk||[];n.vw=n.vw||[];n.cm=n.cm||[]});D.exams.forEach(e=>{e.lk=e.lk||[];e.cm=e.cm||[];e.fp=e.fp||{}});if(!D.cfg.c0){D.cfg.c0=1;if(!D.cfg.mail)D.cfg.mail='rain3112726@gmail.com';if(!D.cfg.oth)D.cfg.oth='IG：rain._.afternoon';save()}};
 const log=t=>{D.log.unshift({d:new Date().toLocaleString('zh-TW'),w:me()?.name||'系統',t});D.log=D.log.slice(0,200)};
 const ntf=t=>D.nt.unshift({id:uid(),t,d:new Date().toISOString().slice(0,10)});
@@ -375,9 +375,9 @@ function upg(id){const a=D.apps.find(x=>x.id==id),u=D.users.find(x=>x.id==a.uid)
 function shrink(f,cb,mx=1400){const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const s=Math.min(1,mx/i.width),c=document.createElement('canvas');c.width=i.width*s;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.8))};i.src=r.result};r.readAsDataURL(f)}
 function reg(){return FB.reg()}
 function login(){return FB.login()}
-function verify(){toast('帳號開通改成信箱驗證連結，請到信箱點連結後直接登入')}
-function approve(id){const u=D.users.find(x=>x.id==id);u.st='approved';u.img='';log('通過申請：'+u.name+'（'+u.sid+'）');save();render();toast('已通過！記得寄信通知 '+u.name+'（'+u.email+'）')}
-function reject(id){const u=D.users.find(x=>x.id==id);u.st='rejected';u.why=V('rj'+id);u.img='';log('退件：'+u.name+'（'+u.why+'）');save();render();toast('已退件！記得寄信通知申請人（'+u.email+'）')}
+function verify(){toast('不需要驗證碼了，管理員通過後直接登入就可以')}
+function approve(id){const u=D.users.find(x=>x.id==id);u.st='approved';u.img='';log('通過申請：'+u.name+'（'+u.sid+'）');save();render();toast('已通過！記得通知 '+u.name+'（'+u.email+'）可以登入了')}
+function reject(id){const u=D.users.find(x=>x.id==id);u.st='rejected';u.why=V('rj'+id);u.img='';log('退件：'+u.name+'（'+u.why+'）');save();render();toast('已退件！記得通知申請人（'+u.email+'）')}
 function app(ty){const m=ty=='note'?V('am'):V('ac');if(!m.trim())return toast('內容不能是空的');D.apps.push({id:uid(),ty,uid:S.u,n:me().name,m,s:ty=='note'?V('as'):''});save();toast('已送出，等待管理員審核！')}
 function dl(c,id){const o=D[c].find(x=>x.id==id);o.dc++;save();toast('（示範）開始下載：'+o.t)}
 function zoom(id){const u=D.users.find(x=>x.id==id);$('#modal').innerHTML=`<img src="${u.img}" style="max-width:100%;max-height:92vh;border-radius:14px" onclick="cm()">`;$('#modal').style.display='flex'}
@@ -444,7 +444,7 @@ const H4=P.home;P.home=()=>H4().replace(/<div class="ttl">[\s\S]*?<\/div>/,()=>T
 const wdr=(k,id)=>{const c=k=='n'?'notes':'exams',o=D[c].find(x=>x.id==id);if(!o||o.uid!=S.u)return;o.st='draft';save();toast('已撤回，改好再送審；審核通過前不會公開');k=='n'?go('edn',{eid:id}):editX(id)};
 const delMine=(k,id)=>mdl(`<h3>確定要刪除嗎？</h3><p>刪除後無法復原，留言和星星也會一起消失。</p><button class="btn p" onclick="cm();delMine2('${k}','${id}')">確定刪除</button> <button class="btn x" onclick="cm()">取消</button>`);
 const delMine2=(k,id)=>{const c=k=='n'?'notes':'exams',o=D[c].find(x=>x.id==id);if(!o||o.uid!=S.u)return;D[c]=D[c].filter(x=>x.id!=id);save();render();toast('已刪除')};
-const forgotPw=()=>mdl(`<h3>忘記密碼</h3><p>請輸入註冊用的學校信箱，我們會寄一封重設密碼的信給你。點信裡的連結，就能設定新密碼。</p><input id="fpe" placeholder="學校信箱"><br><br><button class="btn" onclick="fpSend()">寄信給我</button> <button class="btn x" onclick="cm()">取消</button>`);
+const forgotPw=()=>mdl(`<h3>忘記密碼</h3><p>請輸入註冊用的 Gmail 信箱，我們會寄一封重設密碼的信給你。點信裡的連結，就能設定新密碼。</p><input id="fpe" placeholder="Gmail 信箱"><br><br><button class="btn" onclick="fpSend()">寄信給我</button> <button class="btn x" onclick="cm()">取消</button>`);
 const fpSend=()=>{const e=V('fpe').trim();cm();pwMail(e)};
 const pwReset=()=>toast('密碼重設改成由使用者自己用信件完成，不需要臨時密碼');
 const rvOn=k=>Object.assign({nNew:false,nEdit:false,xNew:true,xEdit:true},D.cfg.rv||{})[k];
@@ -465,7 +465,7 @@ const TS_V=[
 {id:'exams',view:'exams',sel:()=>document.querySelector('main .ics')||document.querySelector('main .bar'),t:'題目可以展開詳解。除了愛心和留言，還可以記錄你寫過幾次。'},
 {id:'sub',view:'authors',sel:'main .card',t:'想分享筆記或考古題？從這裡投稿。{審核}'},
 {id:'sat',view:'home',sel:'.st',t:'你的草稿、已發布的內容、收藏和通知，都放在這顆小衛星。'},
-{id:'join',view:'home',sel:()=>[...document.querySelectorAll('nav a')].find(a=>a.textContent.includes('進入星球')),reg:1,menu:1,t:'第一次來？按這裡註冊。用 {信箱} 信箱，驗證信箱、管理員確認身分後就能解鎖全部內容。',note:'📌 管理員審核好會寄信通知你，請留意信箱（也看一下垃圾信件匣）。學生證照片審核通過後就會刪除。'}];
+{id:'join',view:'home',sel:()=>[...document.querySelectorAll('nav a')].find(a=>a.textContent.includes('進入星球')),reg:1,menu:1,t:'第一次來？按這裡註冊。請用自己的 {信箱} 信箱註冊，管理員確認身分後就能解鎖全部內容。',note:'📌 管理員審核好會寄信通知你，請留意信箱（也看一下垃圾信件匣）。學生證照片審核通過後就會刪除。'}];
 const TS_S=[
 {id:'shi',soft:1,t:'歡迎登入！要看看現在你可以做什麼嗎？',yes:'讓我看看！',no:'我想自己試試～'},
 {id:'me',view:'me',sel:'main .g .card',t:'暱稱、頭像、字體都可以改。姓名、學號、年級預設不公開，要不要讓大家看到，由你決定。'},
@@ -474,7 +474,7 @@ const TS_S=[
 const TR={on:false,m:'v',i:0};
 const lsG=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsS=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 const tSteps=()=>TR.m=='s'?TS_S:TS_V;
-const tTxt=st=>{const c=D.cfg,t=c.tour&&c.tour[st.id]!=null?c.tour[st.id]:st.t,dm=(c.dom||['ntu.edu.tw']).map(d=>'@'+d).join('、');return t.replace(/\{審核\}/g,(rvOn('nNew')?'筆記會先給管理員看過':'筆記直接發布')+'，'+(rvOn('xNew')?'考古題會先給管理員看過':'考古題直接發布')+'。').replace(/\{信箱\}/g,dm)};
+const tTxt=st=>{const c=D.cfg,t=c.tour&&c.tour[st.id]!=null?c.tour[st.id]:st.t,dm=(c.dom||['gmail.com']).map(d=>'@'+d).join('、');return t.replace(/\{審核\}/g,(rvOn('nNew')?'筆記會先給管理員看過':'筆記直接發布')+'，'+(rvOn('xNew')?'考古題會先給管理員看過':'考古題直接發布')+'。').replace(/\{信箱\}/g,dm)};
 const tNote=st=>{const c=D.cfg;return c.tour&&c.tour[st.id+'n']!=null?c.tour[st.id+'n']:st.note};
 function tourStart(m,i=0){const o=$('#tr');if(o)o.remove();TR.on=true;TR.m=m;TR.i=i;document.body.classList.add('notr');const d=document.createElement('div');d.id='tr';d.innerHTML='<div class="tr-k"></div><div class="tr-h"></div><div class="tr-b" id="trb" role="dialog" aria-live="polite"></div>';document.body.appendChild(d);tourShow(1)}
 const VN={home:'主頁星球',notes:'課程筆記',exams:'歷屆考古題',authors:'投稿星雲',me:'我的星球'};
@@ -522,7 +522,7 @@ const pwMail=email=>FB.pwMail(email);
 const openReset=t=>{S.rt=t;go('reset')};
 P.reset=()=>{const r=(D.resets||[]).find(x=>x.t==S.rt&&x.exp>Date.now());if(!r)return `<div class="card" style="max-width:420px;margin:30px auto"><h2>連結已失效</h2><p>這個重設連結已經用過或過期了，請重新申請。</p><button class="btn" onclick="go('login')">回登入頁</button></div>`;return `<div class="card" style="max-width:420px;margin:30px auto"><h2>設定新密碼</h2><p style="opacity:.8">信箱確認完成。請輸入新的密碼，設定好之後需要重新登入。</p><label>新密碼（至少 6 碼，推薦包含大小寫英文與符號）</label><input id="rp1" type="password"><label>再輸入一次</label><input id="rp2" type="password"><br><br><button class="btn" onclick="saveReset()">設定新密碼</button></div>`};
 const saveReset=()=>{const r=(D.resets||[]).find(x=>x.t==S.rt&&x.exp>Date.now());if(!r)return go('reset');const a=V('rp1'),b=V('rp2');if(a.length<6)return toast('密碼至少 6 碼');if(a!=b)return toast('兩次輸入的密碼不一樣');pwCheck(a,()=>{const u=D.users.find(x=>x.id==r.uid);u.pw=a;D.resets=D.resets.filter(x=>x!==r);S.u=null;S.rt=null;save();toast('密碼已更新，請用新密碼重新登入');go('login')})};
-const REGN=['請先到信箱點驗證信裡的連結（沒收到請看垃圾信件匣）。','管理員審核好之後，會寫信通知你，請留意信箱。','沒收到信的話，請看一下垃圾信件匣。','審核通過前，你可以先逛逛公開的內容。'];
+const REGN=['審核通過後，用同一組 Gmail 和密碼登入就能使用，不需要點驗證信。','管理員審核好之後，會寫信通知你，請留意信箱。','沒收到信的話，請看一下垃圾信件匣。','審核通過前，你可以先逛逛公開的內容。'];
 const regNotes=()=>D.cfg.regn&&D.cfg.regn.length?D.cfg.regn:REGN;
 const regDone=()=>mdl(`<h3>申請已送出 ✨</h3><p>接下來請留意：</p><ul style="padding-left:20px">${regNotes().map(x=>`<li>${E(x)}</li>`).join('')}</ul><button class="btn" onclick="cm()">我知道了</button>`);
 const ftr=()=>`<div class="ftr"><a onclick="showPriv()">隱私與使用說明</a></div>`;
@@ -539,7 +539,7 @@ render();
 </script><script src="firebase-config.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const OWNER = "Dy7aPkDdsjSeK78niYfwq0Xfu6x1";
@@ -607,6 +607,7 @@ if (!ready) {
       }
     } catch (e) { say(e); }
 
+    D.cfg.dom = ["gmail.com"];   // 註冊固定使用 Gmail
     A = null; S.u = null; D.users = []; D.notes = []; D.exams = [];
     if (u) {
       const owner = u.uid === OWNER;
@@ -620,7 +621,7 @@ if (!ready) {
           await setDoc(doc(db, "users", u.uid), { ...p, createdAt: serverTimestamp() });
         }
       } catch (e) { say(e); }
-      A = { u, admin, owner, p, student: !!(admin || (u.emailVerified && p && p.st === "approved")) };
+      A = { u, admin, owner, p, student: !!(admin || (p && p.st === "approved")) };
     }
 
     try {
@@ -629,7 +630,7 @@ if (!ready) {
         if (A.admin) us = (await getDocs(collection(db, "users"))).docs.map(d => ({ id: d.id, ...d.data() }));
         else if (A.p) us = [{ id: A.u.uid, ...A.p }];
         D.users = us.map(x => {
-          x.ver = x.id === A.u.uid ? ((A.u.emailVerified || A.admin) ? 1 : 0) : 1;   // 管理員帳號是後台手動建立的，不用驗證信
+          x.ver = 1;   // 不再使用信箱驗證，通過審核就能登入
           if (x.createdAt && x.createdAt.toMillis) x.createdAt = x.createdAt.toMillis();
           x.av = avOK(x.av); x.img = "";
           if (x.id === A.u.uid && A.admin) x.role = "admin";
@@ -687,7 +688,8 @@ if (!ready) {
     async reg() {
       const n = V("rn").trim(), s = V("rs").trim(), e = V("re").trim().toLowerCase(), p = V("rp"), f = $("#rf").files[0], off = $("#rof").checked;
       if (!$("#rag").checked) return toast("請先閱讀並同意隱私與使用說明");
-      if (!/^[^\s@]+@ntu\.edu\.tw$/.test(e)) return toast("請使用學校信箱註冊（@ntu.edu.tw）");
+      if (/@ntu\.edu\.tw$/.test(e)) return toast("請改用自己的 Gmail 註冊，不要用學校信箱");
+      if (!/^[^\s@]+@gmail\.com$/.test(e)) return toast("請使用自己的 Gmail 註冊（結尾是 @gmail.com）");
       if (!n || !s || !p || (!f && !off)) return toast("請填完所有欄位並上傳學生證（或選擇實體申請）");
       if (p.length < 6) return toast("密碼至少 6 碼");
       if (!window.__pwok && pwMissing(p).length) { pwCheck(p, () => { window.__pwok = 1; try { reg(); } finally { window.__pwok = 0; } }); return; }
@@ -697,7 +699,6 @@ if (!ready) {
         const c = await createUserWithEmailAndPassword(auth, e, p);
         await setDoc(doc(db, "users", c.user.uid), { name: n, sid: s, g: V("rg"), email: e, role: "student", st: "pending", off: off, vo: V("rv"), createdAt: serverTimestamp() });
         if (img) await setDoc(doc(db, "users", c.user.uid, "private", "idimg"), { img });
-        await sendEmailVerification(c.user);
         await boot(c.user); go("home"); regDone();
       } catch (err) { say(err); }
       busy = false;
@@ -710,15 +711,12 @@ if (!ready) {
         await boot(c.user);
         const p = A && A.p;
         if (!p) { toast("找不到申請資料，請聯絡管理員"); return; }
-        if (!A.admin && !c.user.emailVerified)
-          return mdl(`<h3>請先驗證信箱 📬</h3><p>我們在註冊時寄了一封驗證信，請點信裡的連結（沒收到請看垃圾信件匣），完成後回來重新登入。</p><button class="btn" onclick="cm();FB.resend()">重寄驗證信</button> <button class="btn x" onclick="cm()">關閉</button>`);
         if (!A.admin && p.st === "pending") { toast("還在審核中，結果會由管理員寄信通知～"); await signOut(auth); return; }
         if (!A.admin && p.st === "rejected") { toast("申請被退件：" + (p.why || "") + "。請聯絡管理員，或用另一個信箱重新申請。"); await signOut(auth); return; }
         toast("歡迎回到星球，" + p.name); go(A.admin ? "admin" : "home");
       } catch (err) { say(err); }
     },
     async logout() { S.u = null; try { await signOut(auth); } catch (e) { } go("home"); },
-    async resend() { try { await sendEmailVerification(auth.currentUser); toast("已重寄驗證信，請看信箱與垃圾信件匣"); } catch (e) { say(e); } },
     async pwMail(email) {
       const em = (email !== undefined ? String(email) : (auth.currentUser && auth.currentUser.email) || (me() && me().email) || "").trim();
       if (!em) return toast("請輸入信箱");
